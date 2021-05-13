@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+
+exec &> >( ts '%d-%H:%M:%.S' | ts -i -- '+%H:%M:%.S' | tee -i -- "_logs/$(basename $0).$(date --iso-8601=s).log" )
+
+git checkout 8916a09
+podman build -f Dockerfile -t docker.io/hubbitus/kafkacat-sasl:8916a0956 -t docker.io/hubbitus/kafkacat-sasl:latest
+
+podman push docker.io/hubbitus/kafkacat-sasl:8916a0956
+podman push docker.io/hubbitus/kafkacat-sasl:latest

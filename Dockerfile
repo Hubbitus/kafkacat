@@ -27,6 +27,9 @@ RUN echo Installing ; \
   apk del .dev_pkgs ; \
   rm -rf /var/cache/apk/*
 
+# That is runtime dependency and should be installed after kafkacat build
+RUN apk add --no-cache cyrus-sasl cyrus-sasl-gssapiv2 openssl ca-certificates heimdal
+
 RUN kafkacat -V
 
 ENTRYPOINT ["kafkacat"]
