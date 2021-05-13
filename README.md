@@ -13,6 +13,9 @@ There are some issues that prevent the use official docker container in the Kerb
 
 Please look at [build.podman]() script.
 
+### Docker hub
+Images available on [docker hub](https://hub.docker.com/r/hubbitus/kafkacat-sasl).
+
 ### P.S. My journey to making it work is long...
 1. [issue 319 - GSSAPI doesn't work within alpine container](https://github.com/edenhill/kafkacat/issues/)319. Closed. Moved to `cyrus-sasl`:
 2. [cyrus-sasl!649: Kafka Consumer GSSAPI Error on the `alpine` container, but works on Fedora](https://github.com/cyrusimap/cyrus-sasl/issues/649)
