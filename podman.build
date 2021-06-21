@@ -2,8 +2,11 @@
 
 exec &> >( ts '%d-%H:%M:%.S' | ts -i -- '+%H:%M:%.S' | tee -i -- "_logs/$(basename $0).$(date --iso-8601=s).log" )
 
-git checkout 8916a09
-podman build -f Dockerfile -t docker.io/hubbitus/kafkacat-sasl:8916a0956 -t docker.io/hubbitus/kafkacat-sasl:latest
+TAG=20210622
 
-podman push docker.io/hubbitus/kafkacat-sasl:8916a0956
-podman push docker.io/hubbitus/kafkacat-sasl:latest
+podman build -f Dockerfile -t docker.io/hubbitus/kafkacat-sasl:${TAG} -t docker.io/hubbitus/kafkacat-sasl:latest
+
+podman push docker.io/hubbitus/kafkacat-sasl:${TAG} docker.io/hubbitus/kafkacat-sasl:latest
+
+# Initial development from (see readme):
+# git checkout d6c6f6d

@@ -11,6 +11,9 @@ There are some issues that prevent the use official docker container in the Kerb
    - Required functionality of `schema_id` extraction ([!311](https://github.com/edenhill/kafkacat/issues/311))
    - That also problem use `JSON` output because dependencies managed badly and used libraries forks - [issue 278](https://github.com/edenhill/kafkacat/issues/278).
 
+### Supplementary enhancments
+1. There also applied [PR 281 to display headers as map in JSON ouptut](https://github.com/edenhill/kafkacat/pull/281)
+
 Please look at [build.podman]() script.
 
 ### Docker hub
