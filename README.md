@@ -1,8 +1,8 @@
-# That is FORK!!!
+# This is a FORK!!!
 
 ## Primarily to support Kerberos environment (SASL GSSAPI auth) in alpine container
 
-That is a fork of https://github.com/edenhill/kafkacat
+[This](https://github.com/Hubbitus/kafkacat) is a fork of https://github.com/edenhill/kafkacat
 
 There are some issues that prevent the use official docker container in the Kerberos environment:
 1. [issue 262 - kafkacat installed on alpine 3.8 error |LIBSASL|rdkafka#producer-1| No worthy mechs found](https://github.com/edenhill/kafkacat/issues/262). The main one. So, we add recommended packages: `cyrus-sasl`, `cyrus-sasl-gssapiv2`, `openssl`, `ca-certificates`, `heimdal`
@@ -20,7 +20,7 @@ Please look at [build.podman]() script.
 Images available on [docker hub](https://hub.docker.com/r/hubbitus/kafkacat-sasl).
 
 ### P.S. My journey to making it work is long...
-1. [issue 319 - GSSAPI doesn't work within alpine container](https://github.com/edenhill/kafkacat/issues/)319. Closed. Moved to `cyrus-sasl`:
+1. [issue 319 - GSSAPI doesn't work within alpine container](https://github.com/edenhill/kafkacat/issues/319). Closed. Moved to `cyrus-sasl`:
 2. [cyrus-sasl!649: Kafka Consumer GSSAPI Error on the `alpine` container, but works on Fedora](https://github.com/cyrusimap/cyrus-sasl/issues/649)
 3. Also see [gitter help ask](https://gitter.im/edenhill/librdkafka?at=609b8c4d5cd9f42ddfcaf794).
 4. And [stackoverflow question](https://stackoverflow.com/questions/67509575/kerberros-gssapi-doesnt-work-within-kafkacat-alpine-container/67518751#67518751) (self answered)
