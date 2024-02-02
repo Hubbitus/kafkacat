@@ -1,5 +1,5 @@
 /*
- * kafkacat - Apache Kafka consumer and producer
+ * kcat - Apache Kafka consumer and producer
  *
  * Copyright (c) 2020-2021, Magnus Edenhill
  * All rights reserved.
@@ -26,11 +26,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "kafkacat.h"
+#include "kcat.h"
 #include "input.h"
 
+#include <sys/types.h>
 #include <stdlib.h>
 #ifndef _MSC_VER
+#include <unistd.h>
 #include <sys/mman.h>
 #endif
 
@@ -76,17 +78,19 @@ void inbuf_destroy (struct inbuf *inbuf) {
  */
 static size_t inbuf_get_alloc_size (const struct inbuf *inbuf,
                                     size_t min_size) {
-        if (inbuf->max_size < min_size)
-                KC_FATAL("Invalid allocation size: %"PRIu64,
-                         (uint64_t)min_size);
-
-        return MAX(min_size,
+        const size_t max_size =
 #ifdef MREMAP_MAYMOVE
                    4096
 #else
                    1024
 #endif
-                );
+                ;
+
+        if (inbuf->max_size < min_size)
+                KC_FATAL("Invalid allocation size: %"PRIu64,
+                         (uint64_t)min_size);
+
+        return MAX(min_size, max_size);
 }
 
 
@@ -308,6 +312,8 @@ static void inbuf_split (struct inbuf *inbuf, size_t dof,
 int inbuf_read_to_delimeter (struct inbuf *inbuf, FILE *fp,
                              struct buf **outbuf) {
         int read_size = MIN(1024, inbuf->max_size);
+        int fd = fileno(fp);
+        fd_set readfds;
 
         /*
          * 1. Make sure there is enough output buffer room for read_size.
@@ -322,8 +328,8 @@ int inbuf_read_to_delimeter (struct inbuf *inbuf, FILE *fp,
         if (!inbuf->buf)
                 return 0;  /* Previous EOF encountered, see below. */
 
-        while (1) {
-                size_t r;
+        while (conf.run) {
+                ssize_t r;
                 size_t dof;
                 int delim_found;
 
@@ -343,8 +349,16 @@ int inbuf_read_to_delimeter (struct inbuf *inbuf, FILE *fp,
 
                 inbuf_ensure(inbuf, read_size);
 
-                r = fread(inbuf->buf+inbuf->len, 1, read_size, fp);
-                if (r == 0) {
+                FD_ZERO(&readfds);
+                FD_SET(fd, &readfds);
+                select(1, &readfds, NULL, NULL, NULL);
+
+                if (FD_ISSET(fd, &readfds))
+                        r = read(fd, inbuf->buf+inbuf->len, read_size);
+                else
+                        r = 0;
+
+                if (r <= 0) {
                         if (inbuf->len == 0) {
                                 /* EOF with no accumulated data */
                                 inbuf_destroy(inbuf);
@@ -359,7 +373,7 @@ int inbuf_read_to_delimeter (struct inbuf *inbuf, FILE *fp,
                         }
                 }
 
-                inbuf->len += r;
+                inbuf->len += (size_t)r;
 
         }
 

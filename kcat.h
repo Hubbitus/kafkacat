@@ -1,5 +1,5 @@
 /*
- * kafkacat - Apache Kafka consumer and producer
+ * kcat - Apache Kafka consumer and producer
  *
  * Copyright (c) 2015-2019, Magnus Edenhill
  * All rights reserved.
@@ -57,6 +57,10 @@
 #define HAVE_CONTROLLERID 1
 #else
 #define HAVE_CONTROLLERID 0
+#endif
+
+#if RD_KAFKA_VERSION >= 0x01030000
+#define ENABLE_MOCK 1
 #endif
 
 
@@ -154,6 +158,12 @@ struct conf {
 #if ENABLE_AVRO
         serdes_conf_t *srconf;
         char   *schema_registry_url;
+#endif
+
+#if ENABLE_MOCK
+        struct {
+                int broker_cnt;
+        } mock;
 #endif
 };
 
