@@ -2,22 +2,25 @@
 
 ## Primarily to support Kerberos environment (SASL GSSAPI auth) in alpine container
 
-[This](https://github.com/Hubbitus/kafkacat) is a fork of https://github.com/edenhill/kafkacat
+[This](https://github.com/Hubbitus/kafkacat) is the fork of https://github.com/edenhill/kcat.
 
 There are some issues that prevent the use official docker container in the Kerberos environment:
 1. [issue 262 - kafkacat installed on alpine 3.8 error |LIBSASL|rdkafka#producer-1| No worthy mechs found](https://github.com/edenhill/kafkacat/issues/262). The main one. So, we add recommended packages: `cyrus-sasl`, `cyrus-sasl-gssapiv2`, `openssl`, `ca-certificates`, `heimdal`
-2. There also was [switch](https://github.com/edenhill/kafkacat/commit/8207e7798da2f07b5f0577749a632f590c15d800) in `master` branch to `librdkafka` 1.7.0. After that GSSAPI in that [version broken - see issue 294](https://github.com/edenhill/kafkacat/issues/294). So, I've built from commit 8916a0956.
-3. Also, I need an image from the official repository for two reasons:
+2. Also, I need an image from the official repository for two reasons:
    - Required functionality of `schema_id` extraction ([!311](https://github.com/edenhill/kafkacat/issues/311))
    - That also problem use `JSON` output because dependencies managed badly and used libraries forks - [issue 278](https://github.com/edenhill/kafkacat/issues/278).
 
 ### Supplementary enhancments
 1. There also applied [PR 281 to display headers as map in JSON ouptut](https://github.com/edenhill/kafkacat/pull/281)
 
-Please look at [build.podman]() script.
+Please look at [build.podman]() script as entrypoint to building.
 
 ### Docker hub
 Images available on [docker hub](https://hub.docker.com/r/hubbitus/kafkacat-sasl).
+
+> **Note**: Please pay attention, while binary in this repository is renamed to `kcat`, following the upstream changes, docker images still called kafkacat-sasl to maintain backward compatibility.
+
+>> **Note**: If you find that GSSAPI in last version [broken - see issue 294](https://github.com/edenhill/kafkacat/issues/294). So, I've built from commit 8916a0956 (because of [switch](https://github.com/edenhill/kafkacat/commit/8207e7798da2f07b5f0577749a632f590c15d800) in `master` branch to `librdkafka` 1.7.0) you may use use docker image `docker.io/hubbitus/kafkacat-sasl:20210622` tested in action with SASL+Kerberros I do not have such environment now to test new builds).
 
 ### P.S. My journey to making it work is long...
 1. [issue 319 - GSSAPI doesn't work within alpine container](https://github.com/edenhill/kafkacat/issues/319). Closed. Moved to `cyrus-sasl`:
