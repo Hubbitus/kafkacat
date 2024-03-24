@@ -6,12 +6,13 @@
 
 There are some issues that prevent the use official docker container in the Kerberos environment:
 1. [issue 262 - kafkacat installed on alpine 3.8 error |LIBSASL|rdkafka#producer-1| No worthy mechs found](https://github.com/edenhill/kafkacat/issues/262). The main one. So, we add recommended packages: `cyrus-sasl`, `cyrus-sasl-gssapiv2`, `openssl`, `ca-certificates`, `heimdal`
-2. Also, I need an image from the official repository for two reasons:
+2. Also, I need an image from the official repository for two reasons (but they dows not come for long time):
    - Required functionality of `schema_id` extraction ([!311](https://github.com/edenhill/kafkacat/issues/311))
    - That also problem use `JSON` output because dependencies managed badly and used libraries forks - [issue 278](https://github.com/edenhill/kafkacat/issues/278).
 
 ### Supplementary enhancments
 1. There also applied [PR 281 to display headers as map in JSON ouptut](https://github.com/edenhill/kafkacat/pull/281)
+2. My [bugreport 446](https://github.com/edenhill/kcat/issues/446) and temporary fix.
 
 Please look at [build.podman]() script as entrypoint to building.
 

@@ -2,7 +2,7 @@
 
 exec &> >( ts '%d-%H:%M:%.S' | ts -i -- '+%H:%M:%.S' | tee -i -- "_logs/$(basename $0).$(date --iso-8601=s).log" )
 
-TAG=20240202
+TAG=20240324
 
 podman build -f Dockerfile -t docker.io/hubbitus/kafkacat-sasl:${TAG} -t docker.io/hubbitus/kafkacat-sasl:latest
 
