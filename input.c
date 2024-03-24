@@ -29,10 +29,8 @@
 #include "kcat.h"
 #include "input.h"
 
-#include <sys/types.h>
 #include <stdlib.h>
 #ifndef _MSC_VER
-#include <unistd.h>
 #include <sys/mman.h>
 #endif
 
@@ -312,8 +310,6 @@ static void inbuf_split (struct inbuf *inbuf, size_t dof,
 int inbuf_read_to_delimeter (struct inbuf *inbuf, FILE *fp,
                              struct buf **outbuf) {
         int read_size = MIN(1024, inbuf->max_size);
-        int fd = fileno(fp);
-        fd_set readfds;
 
         /*
          * 1. Make sure there is enough output buffer room for read_size.
@@ -328,8 +324,8 @@ int inbuf_read_to_delimeter (struct inbuf *inbuf, FILE *fp,
         if (!inbuf->buf)
                 return 0;  /* Previous EOF encountered, see below. */
 
-        while (conf.run) {
-                ssize_t r;
+        while (1) {
+                size_t r;
                 size_t dof;
                 int delim_found;
 
@@ -349,16 +345,8 @@ int inbuf_read_to_delimeter (struct inbuf *inbuf, FILE *fp,
 
                 inbuf_ensure(inbuf, read_size);
 
-                FD_ZERO(&readfds);
-                FD_SET(fd, &readfds);
-                select(1, &readfds, NULL, NULL, NULL);
-
-                if (FD_ISSET(fd, &readfds))
-                        r = read(fd, inbuf->buf+inbuf->len, read_size);
-                else
-                        r = 0;
-
-                if (r <= 0) {
+                r = fread(inbuf->buf+inbuf->len, 1, read_size, fp);
+                if (r == 0) {
                         if (inbuf->len == 0) {
                                 /* EOF with no accumulated data */
                                 inbuf_destroy(inbuf);
@@ -373,7 +361,7 @@ int inbuf_read_to_delimeter (struct inbuf *inbuf, FILE *fp,
                         }
                 }
 
-                inbuf->len += (size_t)r;
+                inbuf->len += r;
 
         }
 

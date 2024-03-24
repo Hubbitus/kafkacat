@@ -422,7 +422,7 @@ static void producer_run (FILE *fp, char **paths, int pathcnt) {
 
                 /* Read messages from input, delimited by conf.delim */
                 while (conf.run &&
-                       !(at_eof = !inbuf_read_to_delimeter(&inbuf, fp, &b))) {
+                    inbuf_read_to_delimeter(&inbuf, fp, &b)) {
                         int msgflags = 0;
                         char *buf = b->buf;
                         char *key = NULL;
@@ -487,9 +487,11 @@ static void producer_run (FILE *fp, char **paths, int pathcnt) {
                                 conf.run = 0;
                 }
 
-                if (conf.run && !at_eof)
-                        KC_FATAL("Unable to read message: %s",
-                                 strerror(errno));
+                if (conf.run) {
+                        if (!feof(fp))
+                                KC_FATAL("Unable to read message: %s",
+                                         strerror(errno));
+                }
         }
 
 #if ENABLE_TXNS
